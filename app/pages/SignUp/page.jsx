@@ -1,6 +1,6 @@
 "use client";
 import React from 'react'
-import SignupPage from '../(components)/User/signup/signup';
+import SignupPage from '../../(components)/User/signup/signup';
 
 const SignUp = () => {
   return(

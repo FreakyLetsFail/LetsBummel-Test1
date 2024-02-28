@@ -1,12 +1,13 @@
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation'; // Korrekter Import für useSearchParams
-import { Spinner } from "@nextui-org/react";
-import { data } from 'browserslist';
+import { Spinner, Input, Button} from "@nextui-org/react";
 
 export default function SignupPage() {
   const searchParams = useSearchParams()
   const [isValidToken, setIsValidToken] = useState(false);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     // Extrahiere den Token aus den Suchparametern der URL
@@ -34,7 +35,7 @@ export default function SignupPage() {
       const data = await response.json();
   
       // Prüfe explizit, ob die Anfrage erfolgreich war UND ob das 'success'-Feld true ist
-      if (response.ok && data.success) {
+      if (data.success) {
         setIsValidToken(true);
       } else {
         // Wenn die Anfrage nicht erfolgreich war oder 'success' false ist, als ungültig behandeln
@@ -57,10 +58,70 @@ export default function SignupPage() {
     return <p>Invalid or expired token. Please try again.</p>;
   }
 
+
   return (
-    <div>
-      <h1>Registration</h1>
-      {/* Platz für das Registrierungsformular */}
-    </div>
-  );
+<div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <h1 className="text-2xl font-bold">Registrierung</h1>
+      <form className="w-full max-w-md space-y-4">
+        <Input
+          clearable
+          bordered
+          fullWidth
+          color="primary"
+          size="lg"
+          type="vorname"
+          placeholder="Vorname"
+        />
+        <Input
+          clearable
+          bordered
+          fullWidth
+          color="primary"
+          size="lg"
+          type="nachname"
+          placeholder="Nachname"
+        />
+        <Input
+          clearable
+          bordered
+          fullWidth
+          color="primary"
+          size="lg"
+          type="email"
+          placeholder="E-Mail"
+        />
+        <Input
+          clearable
+          bordered
+          fullWidth
+          color="primary"
+          size="lg"
+          type="email"
+          placeholder="E-Mail bestätigen"
+        />
+        <Input
+          clearable
+          bordered
+          fullWidth
+          color="primary"
+          size="lg"
+          placeholder="Passwort"
+        />
+        <Input
+          clearable
+          bordered
+          fullWidth
+          color="primary"
+          size="lg"
+          placeholder="Passwort bestätigen"
+        />
+        <Button auto flat color="primary" type="submit" className="w-full">
+          Registrieren
+        </Button>
+        </form>
+        </div> 
+        
+        );
 }
+
+

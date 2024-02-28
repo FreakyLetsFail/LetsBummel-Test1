@@ -5,13 +5,46 @@ mongoose.connect(process.env.MONGODB_URI);
 mongoose.Promise = global.Promise
 
 const userSchema = new Schema({
-    name: String,
-    verbindungsid: Number,
-    email: String,
-    password: String,
-    role: String,
-    picture: String,
-    isactivated: Boolean,
+    vorname: {
+        type: String,
+        required: true,
+        unique: flase,
+    },
+    nachname: {
+        type: String,
+        required: true,
+        unique: false,
+    },
+    verbindungsid: {
+        type: String,
+        required: true,
+        unique: false,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
+        unique: false,
+    },
+    role: {
+        type: String,
+        required: true,
+        unique: false,
+    },
+    picture: {
+        type: String,
+        required: false,
+        unique: false,
+    },
+    isactivated: {
+        type: Boolean,
+        required: true,
+        unique: false,
+    },
 },{
     timestamps: true,
 }

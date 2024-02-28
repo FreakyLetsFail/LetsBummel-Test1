@@ -94,10 +94,30 @@ CredentialsProvider({
   })
  ],
  pages: {
-  signIn: "/SignIn",
+  signIn: "/pages/Login",
  },
 
  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+       const isExistingUser = await checkUserExists(email); // Implementiere diese Funktion
+          if (isExistingUser) {
+            return true; // Erlaube die Anmeldung
+          } else {
+      // Verhindere die Anmeldung und leite ggf. zu einer Fehlerseite oder Registrierungsseite um
+         return false;
+    }
+  },
+  async signUp({ user, account, profile, email, credentials }) {
+    const isExistingUser = await checkUserExists(email); // Implementiere diese Funktion
+       if (isExistingUser) {
+         return false; // Erlaube die Anmeldung
+       } else {
+   // Verhindere die Anmeldung und leite ggf. zu einer Fehlerseite oder Registrierungsseite um
+      return true;
+ }
+
+  },
+
     async jwt({token, user}){
         if(user) token.role = user.role;
         return token; 

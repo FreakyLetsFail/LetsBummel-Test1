@@ -26,12 +26,12 @@ const Nav = () => {
       {isUser && (
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="/Kalender">
+          <Link color="foreground" href="/pages/Kalender">
             Kalender
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link href="/Member" aria-current="page" color="secondary">
+          <Link href="/pages/Member" aria-current="page" color="secondary">
             Member
           </Link>
         </NavbarItem>
@@ -64,8 +64,8 @@ const Nav = () => {
                 <p className="font-semibold">{session?.user.name}</p>
               </DropdownItem>
               <DropdownItem href="/">Home</DropdownItem>
-              <DropdownItem href="/Kalender">Kalender</DropdownItem>
-              <DropdownItem href="/Verbindung">Verbindungen</DropdownItem>
+              <DropdownItem href="/pages/Kalender">Kalender</DropdownItem>
+              <DropdownItem href="/pages/Verbindung">Verbindungen</DropdownItem>
               <DropdownItem key="system">System</DropdownItem>
               <DropdownItem key="configurations">Configurations</DropdownItem>
               <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
