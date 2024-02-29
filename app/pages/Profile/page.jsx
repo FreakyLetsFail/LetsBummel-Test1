@@ -10,7 +10,6 @@ const Profile = () => {
   return (
     <div>
       <AddUser/>
-      <ProfileInfo/>
     </div>
   )
 }

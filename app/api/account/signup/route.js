@@ -1,4 +1,4 @@
-import User from '../../../../(models)/User'; // Pfad zu deinem User-Modell
+import User from '../../../(models)/User'; // Pfad zu deinem User-Modell
 
 
 export default async function signup(req, res) {

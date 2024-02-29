@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation'; // Korrekter Import für useSearchParams
 import { Spinner, Input, Button} from "@nextui-org/react";
 
+
+
 export default function SignupPage() {
   const searchParams = useSearchParams()
   const [isValidToken, setIsValidToken] = useState(false);
@@ -24,7 +26,7 @@ export default function SignupPage() {
   const verifyToken = async (token) => {
     try {
       setLoading(true);
-      const url = new URL(`/api/token/verify`, window.location.origin);
+      const url = new URL(`/api/account/token/verify`, window.location.origin);
       url.searchParams.append('token', encodeURIComponent(token));
   
       const response = await fetch(url, {
@@ -60,68 +62,8 @@ export default function SignupPage() {
 
 
   return (
-<div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-2xl font-bold">Registrierung</h1>
-      <form className="w-full max-w-md space-y-4">
-        <Input
-          clearable
-          bordered
-          fullWidth
-          color="primary"
-          size="lg"
-          type="vorname"
-          placeholder="Vorname"
-        />
-        <Input
-          clearable
-          bordered
-          fullWidth
-          color="primary"
-          size="lg"
-          type="nachname"
-          placeholder="Nachname"
-        />
-        <Input
-          clearable
-          bordered
-          fullWidth
-          color="primary"
-          size="lg"
-          type="email"
-          placeholder="E-Mail"
-        />
-        <Input
-          clearable
-          bordered
-          fullWidth
-          color="primary"
-          size="lg"
-          type="email"
-          placeholder="E-Mail bestätigen"
-        />
-        <Input
-          clearable
-          bordered
-          fullWidth
-          color="primary"
-          size="lg"
-          placeholder="Passwort"
-        />
-        <Input
-          clearable
-          bordered
-          fullWidth
-          color="primary"
-          size="lg"
-          placeholder="Passwort bestätigen"
-        />
-        <Button auto flat color="primary" type="submit" className="w-full">
-          Registrieren
-        </Button>
-        </form>
-        </div> 
-        
-        );
+    <h1> TEST </h1>
+  );
 }
 
 

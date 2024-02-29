@@ -10,13 +10,13 @@ export const GET = async (request) => {
           return new NextResponse("Token is required", {status: 400});
       }
 
-      const tokenData = await TokenModel.findOneAndDelete({ token: token, isactiv: true });
+      const tokenData = await TokenModel.find({ token: token, isactiv: true });
       if (!tokenData || tokenData.length === 0) { // Überprüfe, ob tokenData leer ist
           console.log("Token not found");
           return new NextResponse("Token not found", {status: 404});
       }
 
-      console.log("Token success and delete");
+      console.log("Token success");
       return NextResponse.json({ success: true, message: "Token verified successfully", data: tokenData });
   } catch (error) {
       console.log("Fehler");

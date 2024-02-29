@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Snippet } from "@nextui-org/react";
-import {Button} from "@nextui-org/react";
+import {Select, SelectSection, SelectItem, Button, Snippet } from "@nextui-org/react";
+import { rolle } from './data';
 
 
 export default function Create() {
@@ -11,7 +11,7 @@ export default function Create() {
     setLoading(true);
     try {
       // Verwenden Sie die Fetch-API, um den Registrierungslink zu generieren.
-      const response = await fetch('http://localhost:3000/api/token/generate', {
+      const response = await fetch('http://localhost:3000/api/account/token/generate', {
         method: 'POST', // Stellen Sie sicher, dass Sie die Methode angeben, wenn die API einen POST-Request erwartet.
       });
       const data = await response.json();
@@ -29,6 +29,16 @@ export default function Create() {
 
   return (
     <div>
+      <Select
+      items={rolle}
+      label="Rolle in der Verbindung"
+      placeholder="Wähle die Rolle"
+      className="max-w-xs"
+    >
+       {(rolle) => <SelectItem key={rolle.value}>{rolle.label}</SelectItem>}
+    </Select>
+    <br/>
+
       <Button onClick={generateLink}>
         Add Registerlink
       </Button>

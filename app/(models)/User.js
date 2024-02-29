@@ -8,7 +8,7 @@ const userSchema = new Schema({
     vorname: {
         type: String,
         required: true,
-        unique: flase,
+        unique: false,
     },
     nachname: {
         type: String,
@@ -17,7 +17,7 @@ const userSchema = new Schema({
     },
     verbindungsid: {
         type: String,
-        required: true,
+        required: false,
         unique: false,
     },
     email: {
