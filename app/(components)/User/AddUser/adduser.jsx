@@ -1,15 +1,25 @@
 
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation'; // Korrekter Import für useSearchParams
-import { Spinner, Input, Button} from "@nextui-org/react";
+import React, { useCallback, useEffect, useState } from 'react';
+import { redirect, useSearchParams } from 'next/navigation'; // Korrekter Import für useSearchParams
+import { Spinner, Input, Button, user} from "@nextui-org/react";
+import { useSession, signIn, signOut } from "next-auth/react";
+
 
 
 
 export default function SignupPage() {
   const searchParams = useSearchParams()
+  const { data: session } = useSession();
   const [isValidToken, setIsValidToken] = useState(false);
   const [loading, setLoading] = useState(true);
+  const token = searchParams.get('token');
+   
+  
 
+  if(!session){
+    redirect('/api/auth/signin?callbackUrl=/pages/AddUser?token=${token}')
+  }
+ 
 
   useEffect(() => {
     // Extrahiere den Token aus den Suchparametern der URL

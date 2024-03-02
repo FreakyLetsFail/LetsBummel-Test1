@@ -1,4 +1,4 @@
-import Verbindungen from "../(components)/Verbindungen"
+import Verbindungen from "@/app/(components)/Verbindungen"
 
 const page = () => {
   return (

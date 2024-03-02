@@ -112,9 +112,7 @@ CredentialsProvider({
   async signIn({profile, credentials, user, account}){
 
     if(account.provider === "google" || account.provider === "apple"){
-
       const userExist = await User.findOne({email: profile.email});
-
       if(!userExist){
         console.log("Erstelle benutzer:", profile.email)
         const user = User.create({
@@ -134,15 +132,12 @@ CredentialsProvider({
     if(account.provider === "credentials"){
       try{
       const userExist = await User.findOne({email: credentials.email});
-
       if(userExist){
         return true
       }
-      
      }catch (error){
       console.log(error)
       return false
-    
     }
   } 
   },
@@ -151,9 +146,33 @@ CredentialsProvider({
         if(user) token.role = user.role;
         return token; 
     },
-    async session({session, token}){
-        if(session?.user) session.user.role = token.role;
-        return session;
-    }
+    async session({ session, user, token }) {
+      if(user){
+        // Wenn `user` Objekt vorhanden ist, direkt verwenden
+        session.user.name = user.vorname + " " + user.nachname;
+        session.user.image = user.picture;
+      } else if(token && token.email){
+        // Wenn `user` Objekt nicht vorhanden ist, aber `token` hat eine E-Mail,
+        // können Sie den Benutzer aus der Datenbank abfragen
+        const foundUser = await User.findOne({ email: token.email }).lean().exec();
+    
+        if(foundUser){
+          // Fügen Sie benutzerdefinierte Benutzerdaten zur Session hinzu
+          session.user.name = foundUser.vorname + " " + foundUser.nachname;
+          session.user.image = foundUser.picture;
+          session.user.role = foundUser.role;
+          session.user.verbindungsid = foundUser.verbindungsid;
+          
+        }
+      }
+    
+      // Stellen Sie sicher, dass Sie die modifizierte Session zurückgeben
+      return session;
+    },
+    async redirect({ url, baseUrl }) {
+      return baseUrl
+    },
+
+    
  }
 }

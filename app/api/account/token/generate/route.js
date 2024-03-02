@@ -6,6 +6,19 @@ import 'moment-timezone';
 
 
 export async function POST(req, res) {
+  const body = await  req.json();
+  const { verbindungsid, role} = body
+
+  console.log("body:", body);
+  console.log("rolle:", role)
+
+  if(!verbindungsid || !role){
+    console.log("Missing Arguments");
+
+  return new Response("Missing Arguments",{status:400});
+
+}
+
     try {
       const token = nanoid();
       const moment = require('moment-timezone');
@@ -14,7 +27,7 @@ export async function POST(req, res) {
       const isactiv = Boolean(true); 
       console.log("Expires", expiresAt, isactiv)
    
-      await TokenModel.create({ token, expiresAt, isactiv });
+      await TokenModel.create({ token, verbindungsid, role ,expiresAt, isactiv });
       const signuppage = `http://localhost:3000/pages/AddUser?token=${token}`
   
         return new NextResponse(JSON.stringify({ link: signuppage }), {status: 200, headers: {"Content-Type": "application/json"}});

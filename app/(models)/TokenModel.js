@@ -12,6 +12,16 @@ const tokenSchema = new mongoose.Schema({
       required: true,
       unique: true,
     },
+    verbindungsid: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    role:{
+      type: String,
+      required: true,
+      unique: false,
+    },
     expiresAt: {
       type: Date,
       required: true,

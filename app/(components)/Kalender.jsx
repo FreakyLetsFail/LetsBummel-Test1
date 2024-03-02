@@ -10,7 +10,7 @@ const Kalender = () => {
   const [selectedTermine, setSelectedTermine] = useState([]);
 
   useEffect(() => {
-    fetch('http://192.168.2.104:3000/api/Kalender/read')
+    fetch('http://localhost:3000/api/Kalender/read')
       .then(response => response.json())
       .then(data => setTermine(data))
       .catch(error => console.error('Error fetching data: ', error));

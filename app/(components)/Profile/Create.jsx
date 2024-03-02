@@ -1,54 +1,77 @@
 import React, { useState } from 'react';
-import {Select, SelectSection, SelectItem, Button, Snippet } from "@nextui-org/react";
-import { rolle } from './data';
-
+import { useSession } from "next-auth/react";
+import { Card, Button, Snippet, RadioGroup, Radio } from "@nextui-org/react";
 
 export default function Create() {
+  const { data: session } = useSession();
+  const [selected, setSelected] = React.useState("fux");
   const [link, setLink] = useState('');
   const [loading, setLoading] = useState(false);
 
   const generateLink = async () => {
+    if (!selected || !session?.user.verbindungsid) {
+      console.error("Rolle oder verbindungsid fehlt");
+      return;
+    }
+
     setLoading(true);
     try {
-      // Verwenden Sie die Fetch-API, um den Registrierungslink zu generieren.
-      const response = await fetch('http://localhost:3000/api/account/token/generate', {
-        method: 'POST', // Stellen Sie sicher, dass Sie die Methode angeben, wenn die API einen POST-Request erwartet.
+      const response = await fetch('/api/account/token/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          verbindungsid: session.user.verbindungsid,
+          role: selected,
+        }),
       });
       const data = await response.json();
       if (data.link) {
         setLink(data.link);
+        console.log({link})
       } else {
-        console.error('Link was not returned from the API');
+        console.error('Link wurde nicht von der API zurückgegeben');
       }
     } catch (error) {
-      console.error('Failed to generate link', error);
+      console.error('Fehler beim Generieren des Links', error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      <Select
-      items={rolle}
-      label="Rolle in der Verbindung"
-      placeholder="Wähle die Rolle"
-      className="max-w-xs"
+    <Card css={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', padding: '20px' }}>
+          
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+    <RadioGroup
+      label="Wähle deine Rolle"
+      value={selected}
+      orientation="horizontal"
+      onValueChange={setSelected}
     >
-       {(rolle) => <SelectItem key={rolle.value}>{rolle.label}</SelectItem>}
-    </Select>
-    <br/>
+      <Radio value="fux">Fux</Radio>
+      <Radio value="bursch">Bursch</Radio>
+      <Radio value="dame">Dame</Radio>
+      <Radio value="alter_herr">Alter Herr</Radio>
+      <Radio value="hohe_dame">Hohe Dame</Radio>
+    </RadioGroup>
 
-      <Button onClick={generateLink}>
-        Add Registerlink
-      </Button>
-      {link && (
-        <div>
-          <p>Registrierungslink:</p>
-          {/* Verwenden Sie das Snippet-Element, um den Link anzuzeigen und die Kopierfunktion zu ermöglichen. */}
-          <Snippet>{link}</Snippet>
+    
         </div>
+
+        <Button onClick={generateLink} disabled={loading}>
+        {loading ? 'Lädt...' : 'Registrierungslink generieren'}
+      </Button>
+
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+    {link && (
+        <Snippet symbol="" variant="bordered"> {link} </Snippet>
       )}
+      
+     
     </div>
+  </Card>
   );
 }
