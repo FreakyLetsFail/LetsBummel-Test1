@@ -1,69 +1,127 @@
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation'; // Korrekter Import für useSearchParams
-import { Spinner, Input, Button} from "@nextui-org/react";
+export default function SignUp() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    confirmEmail: '',
+    password: '',
+    confirmPassword: '',
+  });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-
-export default function SignupPage() {
-  const searchParams = useSearchParams()
-  const [isValidToken, setIsValidToken] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-
-  useEffect(() => {
-    // Extrahiere den Token aus den Suchparametern der URL
-    const token = searchParams.get('token');
-    console.log("Token from URL:", token); // Zum Debuggen
-
-    if (token) {
-      verifyToken(token);
-    } else {
-      setLoading(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Einfache Validierung für E-Mail und Passwort
+    if (formData.email !== formData.confirmEmail) {
+      alert('E-Mails stimmen nicht überein!');
+      return;
     }
-  }, [searchParams]); // Reagiere auf Änderungen in den Suchparametern
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwörter stimmen nicht überein!');
+      return;
+    }
 
-  const verifyToken = async (token) => {
+    // Entferne die Felder confirmEmail und confirmPassword vor dem Senden
+    const { confirmEmail, confirmPassword, ...dataToSend } = formData;
+
     try {
-      setLoading(true);
-      const url = new URL(`/api/account/token/verify`, window.location.origin);
-      url.searchParams.append('token', encodeURIComponent(token));
-  
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' },
+      const response = await fetch('/api/account/signup', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
       });
-  
-      const data = await response.json();
-  
-      // Prüfe explizit, ob die Anfrage erfolgreich war UND ob das 'success'-Feld true ist
-      if (data.success) {
-        setIsValidToken(true);
+
+      if (response.ok) {
+        // Bei Erfolg, z.B. zur Login-Seite weiterleiten
+        router.push('/login');
       } else {
-        // Wenn die Anfrage nicht erfolgreich war oder 'success' false ist, als ungültig behandeln
-        throw new Error(data.message || 'Token validation failed');
+        // Fehlerbehandlung, z.B. Fehlermeldung anzeigen
+        const errorData = await response.json();
+        alert(`Fehler: ${errorData.error}`);
       }
     } catch (error) {
-      console.error('Error verifying token:', error);
-      setIsValidToken(false);
-    } finally {
-      setLoading(false);
+      console.error('Fehler beim Senden der Registrierungsdaten', error);
+      alert('Fehler beim Registrieren. Bitte versuchen Sie es später erneut.');
     }
   };
 
-
-  if (loading) {
-    return <Spinner label="Loading..." color="warning" />;
-  }
-
-  if (!isValidToken) {
-    return <p>Invalid or expired token. Please try again.</p>;
-  }
-
-
   return (
-    <h1> TEST </h1>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow">
+        <h2 className="text-2xl font-bold text-center">Registrieren</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+          <input
+            name="firstName"
+            type="text"
+            placeholder="Vorname"
+            required
+            className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={formData.firstName}
+            onChange={handleChange}
+          />
+          <input
+            name="lastName"
+            type="text"
+            placeholder="Nachname"
+            required
+            className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={formData.lastName}
+            onChange={handleChange}
+          />
+          <input
+            name="email"
+            type="email"
+            placeholder="E-Mail"
+            required
+            className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <input
+            name="confirmEmail"
+            type="email"
+            placeholder="E-Mail bestätigen"
+            required
+            className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={formData.confirmEmail}
+            onChange={handleChange}
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Passwort"
+            required
+            className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          <input
+            name="confirmPassword"
+            type="password"
+            placeholder="Passwort bestätigen"
+            required
+            className="px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-700"
+          >
+            Registrieren
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
-
-

@@ -3,20 +3,21 @@ import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import User from "@/app/(models)/User";
 import bcrypt from "bcrypt";
-import { checkUserExists, checkTokenValid} from "../../../utils/auth";
 
 
 export const options = {
     providers: [
         AppleProvider({
-            profile(profile){
-                console.log("Profile Apple: ", profile)
+
+            profile(profile){  
+              console.log("Profile Apple: ", profile)
 
                 let userRole = "Apple_User"
                 if(profile?.email == "justuswaechter@gmail.com"){
                     userRole = "admin";
                 }
-            
+                
+
 
             return {
                 ...profile,
@@ -29,6 +30,8 @@ export const options = {
         clientSecret: process.env.APPLE_SECRET,
     }),
 
+
+
     GoogleProvider({
         profile(profile){
             console.log("Profile Google: ", profile)
@@ -36,6 +39,13 @@ export const options = {
             let userRole = "Google_User"
             if(profile?.email == "justuswaechter@gmail.com"){
                 userRole = "admin";
+            }
+
+            try {
+
+              
+            } catch (error) {
+              
             }
 
         return {
@@ -65,17 +75,17 @@ CredentialsProvider({
     async authorize(credentials) {
       try {
         console.log(`Suche nach Benutzer mit E-Mail: ${credentials.email}`);
-        const email = credentials.email.toLowerCase();
-        const foundUser = await User.findOne({ email: email }).lean().exec();
+        const foundUser = await User.findOne({ email: credentials.email })
+        .lean()
+        .exec();
         console.log(`Gefundener Benutzer:`, foundUser);  
 
         if (foundUser) {
-          console.log("User Exists");
-          const match = await bcrypt.compare(credentials.password, foundUser.password);
+          const match = await bcrypt.compare(
+            credentials.password,
+            foundUser.password);
+          
           if (match) {
-            // Das Passwort sollte vor der Rückgabe aus dem Objekt entfernt werden,
-            // aber da wir `.lean().exec()` verwenden, erhalten wir ein einfaches JS-Objekt zurück,
-            // daher ist es sicher, das Passwort direkt zu entfernen
             delete foundUser.password;
             return foundUser;
           } else {
@@ -99,6 +109,44 @@ CredentialsProvider({
  },
 
  callbacks: {
+  async signIn({profile, credentials, user, account}){
+
+    if(account.provider === "google" || account.provider === "apple"){
+
+      const userExist = await User.findOne({email: profile.email});
+
+      if(!userExist){
+        console.log("Erstelle benutzer:", profile.email)
+        const user = User.create({
+        vorname: profile.given_name,
+        nachname: profile.family_name,
+        verbindungsid : "",
+        email: profile.email,
+        password: "", 
+        role: "1",
+        picture: profile.picture,
+        isactivated: true
+      })
+      }
+      return true;
+    }
+
+    if(account.provider === "credentials"){
+      try{
+      const userExist = await User.findOne({email: credentials.email});
+
+      if(userExist){
+        return true
+      }
+      
+     }catch (error){
+      console.log(error)
+      return false
+    
+    }
+  } 
+  },
+
     async jwt({token, user}){
         if(user) token.role = user.role;
         return token; 

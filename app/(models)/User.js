@@ -1,4 +1,3 @@
-import { Int32 } from "mongodb";
 import mongoose, {Schema, mongo} from "mongoose";
 
 mongoose.connect(process.env.MONGODB_URI);
@@ -27,7 +26,6 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required: true,
         unique: false,
     },
     role: {

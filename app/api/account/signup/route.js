@@ -1,19 +1,42 @@
-import User from '../../../(models)/User'; // Pfad zu deinem User-Modell
+import bcrypt from 'bcrypt';
+import User from "@/app/(models)/User";
+import { NextResponse } from 'next/server';
 
+export async function POST(request){
+  const body = await request.json();
+  const { firstName, lastName, nachname, email, password } = body
+  console.log("body:", body);
 
-export default async function signup(req, res) {
-  const {vorname, name, verbindungsid, email, password, role, picture, isactivated } = req.body;
+    if(!firstName || !lastName || !email  || !password) {
+      console.log("Missing Arguments");
 
-  // Überprüfe, ob der Benutzer bereits existiert
-  const isExistingUser = await checkUserExists(email);
-  if (isExistingUser) {
-    return res.status(409).json({ error: 'Ein Benutzer mit dieser E-Mail existiert bereits.' });
+    return new Response("Missing Arguments",{status:400});
+
   }
 
-  // Hier würdest du den neuen Benutzer erstellen. Die Implementierung hängt von deinem Setup ab.
-  // Beispiel:
-  const newUser = new User({ email, password, name });
-  await newUser.save();
+  const userExist = await User.findOne({email: email})
 
-  return res.status(201).json({ message: 'Benutzer erfolgreich registriert.' });
+  if(userExist){
+    console.log(" Already exists");
+
+    return new NextResponse("User already exists", {status: 400});
+  }
+
+  const hashedPassword = await bcrypt.hash(password,10);
+
+  console.log("Create User blöd ");
+
+  const user = await User.create({
+    vorname: firstName,
+    nachname: lastName,
+    verbindungsid : "",
+    email: email,
+    password: hashedPassword, 
+    role: "1",
+    picture: "",
+    isactivated: true
+  })
+
+  console.log("User erstellt")
+  return NextResponse.json("User  created");
 }

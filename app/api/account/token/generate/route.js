@@ -15,7 +15,7 @@ export async function POST(req, res) {
       console.log("Expires", expiresAt, isactiv)
    
       await TokenModel.create({ token, expiresAt, isactiv });
-      const signuppage = `http://localhost:3000/pages/SignUp?token=${token}`
+      const signuppage = `http://localhost:3000/pages/AddUser?token=${token}`
   
         return new NextResponse(JSON.stringify({ link: signuppage }), {status: 200, headers: {"Content-Type": "application/json"}});
     } catch (error) {
